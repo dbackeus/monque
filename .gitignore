@@ -1,6 +1,5 @@
 ## MAC OS
 .DS_Store
-
 ## TEXTMATE
 *.tmproj
 tmtags
@@ -17,5 +16,9 @@ tmtags
 coverage
 rdoc
 pkg
+doc/*
+.yardoc
 
 ## PROJECT::SPECIFIC
+spec/db/*
+!spec/db/mongodb-test.conf

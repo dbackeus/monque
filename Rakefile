@@ -5,12 +5,13 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "monque"
-    gem.summary = %Q{TODO: one-line summary of your gem}
-    gem.description = %Q{TODO: longer description of your gem}
+    gem.summary = %Q{Like Delayed Job it hath priorities. Like Resque it hath a multitude of queues. Unlike them both it persists on MongoDB.}
+    gem.description = %Q{Like Delayed Job it hath priorities. Like Resque it hath a multitude of queues. Unlike them both it persists on MongoDB.}
     gem.email = "duztdruid@gmail.com"
     gem.homepage = "http://github.com/dbackeus/monque"
     gem.authors = ["David Backeus"]
-    gem.add_development_dependency "rspec", ">= 1.2.9"
+    gem.add_dependency "mongo", ">= 0.18.3"
+    gem.add_development_dependency "rspec", ">= 1.3.0"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
   Jeweler::GemcutterTasks.new
