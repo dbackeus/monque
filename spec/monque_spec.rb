@@ -38,7 +38,7 @@ describe Monque do
     job = Monque.reserve
     job.unlock
     
-    Monque.reserve.record.should == job.record
+    Monque.reserve.record.values.should include(*job.record.values)
   end
   
   it "should reserve jobs from a specific queue" do

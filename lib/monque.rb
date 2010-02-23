@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'mongo'
 require 'monque/job'
+require 'monque/worker'
 
 module Monque
   def self.db=(database)
@@ -47,7 +48,7 @@ module Monque
     
     queue = queue(options[:queue] || queue_from_class(klass) || "default")
     
-    record = {"klass" => klass.to_s, "args" => args, "in_progress" => false, "priority" => options[:priority] || 0}
+    record = {"klass" => klass.to_s, "args" => args, "in_progress" => false, "priority" => options[:priority] || 0, "run_after" => Time.now}
     id = queue.insert(record)
     Job.new(queue, record.merge("_id" => id))
   end
@@ -64,6 +65,7 @@ module Monque
     queue = db.create_collection("monque_#{queue_name}")
     queue.create_index :in_progress
     queue.create_index :priority
+    queue.create_index :run_after
     queue
   end
   
@@ -77,12 +79,25 @@ module Monque
   def self.reserve(queue_name = "default")
     queue = queue(queue_name)
     
-    record = queue.find_one({"in_progress" => false}, :sort => ["priority", :desc])
+    record = queue.find_one({:in_progress => false, :run_after => {"$lt" => Time.now}}, :sort => ["priority", :desc])
     return nil unless record
     
     job = Job.new(queue, record)
     job.lock
     job
+  end
+  
+  # This method gets the first job in the specified queue without bothering
+  # about any arguments.
+  #
+  # @param [Symbol, String] queue_name 
+  #
+  # @return [Monque::Job] job
+  def self.first(queue_name = "default")
+    queue = queue(queue_name)
+    record = queue.find_one
+    return nil unless record
+    Job.new(queue, record)
   end
   
   private

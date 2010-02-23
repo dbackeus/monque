@@ -20,13 +20,19 @@ at_exit do
 end
 
 puts "Starting mongod for testing at localhost:26000..."
-`mongod run --fork --verbose --config #{dir}/db/mongodb-test.conf`
+`mongod run --fork --nohttpinterface --config #{dir}/db/mongodb-test.conf`
 
 sleep 1 # Wait for mongod to be ready
 
 Monque.db = Mongo::Connection.new("localhost", 26000).db("monque_test")
 
 Spec::Runner.configure do |config|  
+end
+
+class SimpleJob
+  def self.perform
+    "Done!"
+  end
 end
 
 class GoodJob
@@ -39,4 +45,13 @@ class GoodSpecificQueueJob < GoodJob
   def self.queue
     "specific"
   end
+end
+
+class BadJob
+  def self.perform
+    raise "epic fail"
+  end
+end
+
+class JobWithoutPerform
 end
