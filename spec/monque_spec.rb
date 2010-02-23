@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Monque do
   before(:each) do
-    Monque.db.collections.each { |collection| collection.drop }
+    Monque.drop
   end
   
   it "should add a job to the 'default' queue if non specified" do
@@ -69,7 +69,7 @@ describe Monque do
   
   it "should override queue through the queue option" do
     job = Monque.enqueue(GoodSpecificQueueJob, :job_options => {:queue => "overridden"})
-    job.queue.name.should == "monque_overridden"
+    job.queue_name.should == "overridden"
   end
   
   it "should reserve jobs in order of priority" do

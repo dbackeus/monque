@@ -1,9 +1,9 @@
 module Monque
   class Job
-    attr_accessor :record, :queue
+    attr_accessor :record, :queue_name
     
-    def initialize(queue, record)
-      @queue = queue
+    def initialize(queue_name, record)
+      @queue_name = queue_name
       @record = record
     end
     
@@ -40,7 +40,7 @@ module Monque
     end
     
     def remove
-      @queue.remove({:_id => @record["_id"]})
+      queue.remove({:_id => @record["_id"]})
     end
     
     def perform
@@ -52,8 +52,12 @@ module Monque
     end
     
     private
+    def queue
+      Monque.queue(queue_name)
+    end
+    
     def update_attributes(attributes)
-      @queue.update({:_id => @record["_id"]}, attributes)
+      queue.update({:_id => @record["_id"]}, attributes)
     end
     
     def fail(exception)

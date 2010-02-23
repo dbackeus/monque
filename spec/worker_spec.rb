@@ -3,8 +3,7 @@ require 'spec_helper'
 module Monque
   describe Worker do
     before(:each) do
-      Monque.db.collections.each { |collection| collection.drop }
-      
+      Monque.drop
       @worker = Worker.new
     end
   

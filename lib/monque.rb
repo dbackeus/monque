@@ -4,6 +4,8 @@ require 'monque/job'
 require 'monque/worker'
 
 module Monque
+  @queues = {}
+  
   def self.db=(database)
     database.strict = true
     @database = database
@@ -46,11 +48,11 @@ module Monque
       args.pop if args.last.empty?
     end
     
-    queue = queue(options[:queue] || queue_from_class(klass) || "default")
-    
+    queue_name = options[:queue] || queue_from_class(klass) || "default"
     record = {"klass" => klass.to_s, "args" => args, "in_progress" => false, "priority" => options[:priority] || 0, "run_after" => Time.now}
-    id = queue.insert(record)
-    Job.new(queue, record.merge("_id" => id))
+    id = queue(queue_name).insert(record)
+    
+    Job.new(queue_name, record.merge("_id" => id))
   end
   
   # This method is used to fetch the mongo collection object for
@@ -60,13 +62,14 @@ module Monque
   #
   # @return [Mongo::Collection] queue
   def self.queue(queue_name)
-    db.collection("monque_#{queue_name}")
+    queue_name = "monque_#{queue_name}"
+    @queues[queue_name] ||= db.collection(queue_name)
   rescue Mongo::MongoDBError
-    queue = db.create_collection("monque_#{queue_name}")
+    queue = db.create_collection(queue_name)
     queue.create_index :in_progress
     queue.create_index :priority
     queue.create_index :run_after
-    queue
+    @queues[queue_name] = queue
   end
   
   # This method retrieves the highest priorotised job in the specified queue,
@@ -82,7 +85,7 @@ module Monque
     record = queue.find_one({:in_progress => false, :run_after => {"$lt" => Time.now}}, :sort => ["priority", :desc])
     return nil unless record
     
-    job = Job.new(queue, record)
+    job = Job.new(queue_name, record)
     job.lock
     job
   end
@@ -97,11 +100,16 @@ module Monque
     queue = queue(queue_name)
     record = queue.find_one
     return nil unless record
-    Job.new(queue, record)
+    Job.new(queue_name, record)
+  end
+  
+  def self.drop
+    @queues = {}
+    db.collections.each { |collection| collection.drop }
   end
   
   private
   def self.queue_from_class(klass)
-   klass.queue if klass.respond_to?(:queue)
+    klass.instance_variable_get(:@queue) || (klass.respond_to?(:queue) and klass.queue)
   end
 end
