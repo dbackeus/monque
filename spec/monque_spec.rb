@@ -92,4 +92,21 @@ describe Monque do
   it "should add indexes to queue collections" do
     Monque.queue("default").index_information.values.flatten.should include("in_progress", "priority")
   end
+  
+  it "should drop all current queues" do
+    Monque.enqueue(GoodJob, :job_options => {:queue => "queue1"})
+    Monque.enqueue(GoodJob, :job_options => {:queue => "queue2"})
+    Monque.enqueue(GoodJob, :job_options => {:queue => "queue3"})
+    
+    Monque.db.create_collection("not_a_queue")
+    Monque.db.collection("not_a_queue").insert({:should => "remain"})
+    
+    Monque.drop
+    
+    Monque.queue("queue1").size.should == 0
+    Monque.queue("queue2").size.should == 0
+    Monque.queue("queue3").size.should == 0
+    
+    Monque.db.collection("not_a_queue").size.should == 1
+  end
 end

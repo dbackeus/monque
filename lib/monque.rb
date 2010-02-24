@@ -105,7 +105,7 @@ module Monque
   
   def self.drop
     @queues = {}
-    db.collections.each { |collection| collection.drop }
+    db.collections.each { |collection| collection.drop if collection.name.index("monque_") == 0 }
   end
   
   private
