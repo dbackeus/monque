@@ -40,7 +40,7 @@ module Monque
     end
     
     def destroy
-      queue.remove({:_id => @record["_id"]})
+      queue.remove({"_id" => @record["_id"]})
     end
     
     def perform
@@ -56,7 +56,7 @@ module Monque
     end
     
     def update_attributes(attributes)
-      queue.update({:_id => @record["_id"]}, attributes)
+      queue.update({"_id" => @record["_id"]}, attributes)
     end
     
     def fail(exception)

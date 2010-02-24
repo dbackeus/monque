@@ -49,7 +49,13 @@ module Monque
     end
     
     queue_name = options[:queue] || queue_from_class(klass) || "default"
-    record = {"klass" => klass.to_s, "args" => args, "in_progress" => false, "priority" => options[:priority] || 0, "run_after" => Time.now}
+    
+    record = { "klass" => klass.to_s, 
+               "args" => args, 
+               "in_progress" => false, 
+               "priority" => options[:priority] || 0, 
+               "run_after" => Time.now }
+    
     id = queue(queue_name).insert(record)
     
     Job.new(queue_name, record.merge("_id" => id))
