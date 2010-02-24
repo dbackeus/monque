@@ -12,7 +12,8 @@ module Monque
   end
   
   def self.db
-    @database
+    return @database if @database
+    self.db = Mongo::Connection.new.db("monque")
   end
   
   # This method can be used to conveniently add a job to a queue.
