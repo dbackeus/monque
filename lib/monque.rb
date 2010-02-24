@@ -82,9 +82,9 @@ module Monque
   #
   # @return [Array] queues
   def self.queues
-    db.collection_names
-      .select { |c| c.index("monque_") == 0 }
-      .collect { |c| c.split("_")[1..-1].join("_") }
+    db.collection_names.
+      select { |c| c.index("monque_") == 0 }.
+      collect { |c| c.split("_")[1..-1].join("_") }
   end
   
   # This method retrieves the highest priorotised job in the specified queue,
