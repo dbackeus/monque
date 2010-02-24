@@ -37,12 +37,16 @@ module Monque
       @record["run_after"]
     end
     
+    def in_progress?
+      @record["in_progress"]
+    end
+    
     def lock
-      update_attributes "$set" => {:in_progress => true}
+      update_attributes "$set" => {"in_progress" => true}
     end
     
     def unlock
-      update_attributes "$set" => {:in_progress => false}
+      update_attributes "$set" => {"in_progress" => false}
     end
     
     def destroy
@@ -62,12 +66,13 @@ module Monque
     end
     
     def update_attributes(attributes)
+      @record.merge!(attributes["$set"])
       queue.update({"_id" => @record["_id"]}, attributes)
     end
     
     def fail(exception)
       fail_text = "#{exception.message}\n#{exception.backtrace.join("\n")}"
-      update_attributes "$set" => {:in_progress => false, :last_error => fail_text, :run_after => Time.now + 60}, "$inc" => {:attempts => 1}
+      update_attributes "$set" => {"in_progress" => false, "last_error" => fail_text, "run_after" => Time.now + 60}, "$inc" => {"attempts" => 1}
       false
     end
     

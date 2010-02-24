@@ -12,5 +12,15 @@ module Monque
       all.shift.queue_name.should == "queue2"
       all.shift.queue_name.should == "queue3"
     end
+    
+    it "should know if it's in progress" do
+      job = Monque.enqueue(SimpleJob)
+      
+      job.lock
+      job.should be_in_progress
+      
+      job.unlock
+      job.should_not be_in_progress
+    end
   end
 end
