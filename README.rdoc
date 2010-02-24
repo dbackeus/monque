@@ -2,6 +2,8 @@
 
 Like Delayed Job it hath priorities. Like Resque it hath a multitude of queues. Unlike them both it persists on MongoDB.
 
+This is currently mostly developed for fun and learning. No production use etc as of yet.
+
 == Copyright
 
 Copyright (c) 2010 David Backeus. See LICENSE for details.
