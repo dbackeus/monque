@@ -2,6 +2,12 @@ module Monque
   class Job
     attr_accessor :record, :queue_name
     
+    def self.all
+      Monque.queues.collect do |queue_name|
+        Monque.queue(queue_name).find.collect { |record| Job.new(queue_name, record) }
+      end.flatten
+    end
+    
     def initialize(queue_name, record)
       @queue_name = queue_name
       @record = record
