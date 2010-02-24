@@ -11,7 +11,7 @@ module Monque
       Monque.enqueue(GoodJob, "James", "Bond")
       GoodJob.should_receive(:perform).with("James", "Bond")
       
-      @worker.work
+      @worker.work(0)
       
       Monque.queue(:default).size.should == 0
     end
@@ -20,7 +20,7 @@ module Monque
       Monque.enqueue(BadJob)
 
       start_time = Time.now
-      @worker.work
+      @worker.work(0)
       
       Monque.queue(:default).size.should == 1
       
@@ -34,7 +34,7 @@ module Monque
     it "should fail jobs with no perform method" do
       Monque.enqueue(JobWithoutPerform)
       
-      @worker.work
+      @worker.work(0)
       
       Monque.queue(:default).size.should == 1
       
@@ -49,7 +49,7 @@ module Monque
       Monque.enqueue(SimpleJob)
       Monque.enqueue(SimpleJob)
       
-      @worker.work
+      @worker.work(0)
       
       Monque.queue(:default).size.should == 1
     end
@@ -60,7 +60,7 @@ module Monque
       Monque.enqueue(GoodSpecificQueueJob, "Luke", "Skywalker")
       Monque.enqueue(GoodSpecificQueueJob, "Luke", "Skywalker")
       
-      @worker.work
+      @worker.work(0)
       
       Monque.queue(:specific).size.should == 2
       Monque.queue(:default).size.should == 0
@@ -75,7 +75,7 @@ module Monque
       Monque.enqueue(GoodSpecificQueueJob, "Luke", "Skywalker")
       Monque.queue(:specific).size.should == 2
       
-      worker.work
+      worker.work(0)
       
       Monque.queue(:specific).size.should == 0
       Monque.queue(:default).size.should == 2
@@ -89,7 +89,7 @@ module Monque
       Monque.enqueue(GoodSpecificQueueJob, "Luke", "Skywalker")
       Monque.enqueue(GoodSpecificQueueJob, "Luke", "Skywalker", :job_options => {:queue => :omg})
       
-      worker.work
+      worker.work(0)
       
       Monque.queue(:specific).size.should == 0
       Monque.queue(:default).size.should == 0

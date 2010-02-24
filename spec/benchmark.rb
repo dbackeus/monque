@@ -50,7 +50,7 @@ puts "Enqueuing"
 puts result
 
 worker = Monque::Worker.new("queue0", "queue1", "queue2", "queue3")
-result = Benchmark.measure { worker.work }
+result = Benchmark.measure { worker.work(0) }
 
 puts "Working"
 puts result
