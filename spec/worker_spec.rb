@@ -54,7 +54,7 @@ module Monque
       Monque.queue(:default).size.should == 1
     end
     
-    it "should work on the default queue by default" do
+    it "should work on all queues by default" do
       Monque.enqueue(SimpleJob)
       Monque.enqueue(SimpleJob)
       Monque.enqueue(GoodSpecificQueueJob, "Luke", "Skywalker")
@@ -62,7 +62,7 @@ module Monque
       
       @worker.work(0)
       
-      Monque.queue(:specific).size.should == 2
+      Monque.queue(:specific).size.should == 0
       Monque.queue(:default).size.should == 0
     end
     
