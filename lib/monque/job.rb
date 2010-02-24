@@ -39,14 +39,13 @@ module Monque
       update_attributes "$set" => {:in_progress => false}
     end
     
-    def remove
+    def destroy
       queue.remove({:_id => @record["_id"]})
     end
     
     def perform
-      result = payload_class.perform(*args)
-      remove
-      result
+      payload_class.perform(*args)
+      destroy
     rescue => e
       fail(e)
     end

@@ -58,7 +58,7 @@ describe Monque do
   it "should remove jobs from queue" do
     job = Monque.enqueue(GoodJob)
     Monque.queue(:default).size.should == 1
-    job.remove
+    job.destroy
     Monque.queue(:default).size.should == 0
   end
   
