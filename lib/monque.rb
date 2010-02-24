@@ -78,6 +78,15 @@ module Monque
     @queues[queue_name] = queue
   end
   
+  # This method is used to fetch a list of all currently populated queues.
+  #
+  # @return [Array] queues
+  def self.queues
+    db.collection_names
+      .select { |c| c.index("monque_") == 0 }
+      .collect { |c| c.split("_")[1..-1].join("_") }
+  end
+  
   # This method retrieves the highest priorotised job in the specified queue,
   # locks the job so that no one else can reserve it and returns it. If no
   # job is availible nil will be returned.
