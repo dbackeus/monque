@@ -38,7 +38,10 @@ describe Monque do
     job = Monque.reserve
     job.unlock
     
-    Monque.reserve.record.values.should include(*job.record.values)
+    expected = job.record
+    expected.delete("in_progress")
+    
+    Monque.reserve.record.values.should include(*expected.values)
   end
   
   it "should reserve jobs from a specific queue" do
@@ -90,7 +93,8 @@ describe Monque do
   end
   
   it "should add indexes to queue collections" do
-    Monque.queue("default").index_information.values.flatten.should include("in_progress", "priority")
+    indexes = Monque.queue("default").index_information.collect { |key, value| value["key"].keys.first }
+    indexes.should include("in_progress", "priority", "run_after")
   end
   
   it "should drop all current queues" do

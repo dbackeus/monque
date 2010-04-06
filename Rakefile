@@ -10,7 +10,7 @@ begin
     gem.email = "duztdruid@gmail.com"
     gem.homepage = "http://github.com/dbackeus/monque"
     gem.authors = ["David Backeus"]
-    gem.add_dependency "mongo", ">= 0.18.3"
+    gem.add_dependency "mongo", ">= 0.19.3"
     gem.add_development_dependency "rspec", ">= 1.3.0"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end

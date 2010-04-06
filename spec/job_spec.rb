@@ -2,6 +2,10 @@ require 'spec_helper'
 
 module Monque
   describe Job do
+    before(:each) do
+      Monque.drop
+    end
+    
     it "should return all jobs" do
       Monque.enqueue(SimpleJob, :job_options => {:queue => "queue1"})
       Monque.enqueue(SimpleJob, :job_options => {:queue => "queue2"})
