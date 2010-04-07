@@ -1,6 +1,7 @@
 dir = File.dirname(File.expand_path(__FILE__))
 $LOAD_PATH.unshift(dir)
 $LOAD_PATH.unshift(File.join(dir, '..', 'lib'))
+require 'rubygems'
 require 'monque'
 require 'spec'
 require 'spec/autorun'
