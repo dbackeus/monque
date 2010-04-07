@@ -2,6 +2,7 @@ require 'rubygems'
 require 'mongo'
 require 'monque/job'
 require 'monque/worker'
+require 'monque/railtie' if defined?(Rails)
 
 module Monque
   @queues = {}

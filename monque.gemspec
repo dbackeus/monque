@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["David Backeus"]
-  s.date = %q{2010-04-06}
+  s.date = %q{2010-04-07}
   s.default_executable = %q{monque-web}
   s.description = %q{Like Delayed Job it hath priorities. Like Resque it hath a multitude of queues. Unlike them both it persists on MongoDB.}
   s.email = %q{duztdruid@gmail.com}
@@ -27,6 +27,7 @@ Gem::Specification.new do |s|
      "VERSION",
      "lib/monque.rb",
      "lib/monque/job.rb",
+     "lib/monque/tasks.rb",
      "lib/monque/worker.rb",
      "monque.gemspec",
      "spec/benchmark.rb",

@@ -1,5 +1,5 @@
-require 'rubygems'
-require 'rake'
+$LOAD_PATH.unshift 'lib'
+require 'monque/tasks'
 
 begin
   require 'jeweler'
