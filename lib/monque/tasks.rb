@@ -2,8 +2,10 @@
 # will give you the monque tasks
 
 namespace :monque do
+  task :setup
+  
   desc "Start a Monque worker (ex. QUEUE=this,that rake monque:work)"
-  task :work do
+  task :work => :setup do
     require 'monque'
     
     queues = (ENV['QUEUES'] || ENV['QUEUE']).to_s.split(',')
