@@ -23,9 +23,14 @@ end
 puts "Starting mongod for testing at localhost:26000..."
 `mongod run --fork --nohttpinterface --config #{dir}/db/mongodb-test.conf`
 
-sleep 1 # Wait for mongod to be ready
-
-Monque.db = Mongo::Connection.new("localhost", 26000).db("monque_test")
+loop do
+  begin
+    Monque.db = Mongo::Connection.new("localhost", 26000).db("monque_test")
+    break
+  rescue Mongo::ConnectionFailure
+    sleep 0.1 # Wait for mongo to be ready
+  end
+end  
 
 Spec::Runner.configure do |config|  
 end
