@@ -103,9 +103,9 @@ module Monque
     @queues[queue_name] ||= db.collection(queue_name)
   rescue Mongo::MongoDBError
     queue = db.create_collection(queue_name)
-    queue.create_index "in_progress"
-    queue.create_index "priority"
-    queue.create_index "run_after"
+    queue.create_index [["in_progress", Mongo::ASCENDING]]
+    queue.create_index [["priority", Mongo::ASCENDING]]
+    queue.create_index [["run_after", Mongo::ASCENDING]]
     @queues[queue_name] = queue
   end
   
