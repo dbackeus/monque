@@ -22,6 +22,7 @@ module Monque
       loop do
         queues.each do |queue|
           while job = Monque.reserve(queue)
+            Monque.logger.info "Performing job #{job.inspect}"
             job.perform
           end
         end

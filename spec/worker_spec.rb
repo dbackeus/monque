@@ -54,6 +54,15 @@ module Monque
       Monque.queue(:default).size.should == 1
     end
     
+    it "should log when performing" do
+      Monque.enqueue(SimpleJob)
+      Monque.enqueue(BadJob)
+      
+      Monque.logger.should_receive(:info).twice
+      
+      @worker.work(0)
+    end
+    
     it "should work on all queues by default" do
       Monque.enqueue(SimpleJob)
       Monque.enqueue(SimpleJob)
