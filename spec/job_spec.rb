@@ -6,15 +6,16 @@ module Monque
       Monque.drop
     end
     
-    it "should return all jobs" do
-      Monque.enqueue(SimpleJob, :job_options => {:queue => "queue1"})
-      Monque.enqueue(SimpleJob, :job_options => {:queue => "queue2"})
-      Monque.enqueue(SimpleJob, :job_options => {:queue => "queue3"})
+    describe "finding jobs" do
+      before(:each) do
+        Monque.enqueue(SimpleJob, :job_options => {:queue => "queue1"})
+        Monque.enqueue(SimpleJob, :job_options => {:queue => "queue2"})
+        Monque.enqueue(SimpleJob, :job_options => {:queue => "queue3"})
+      end
       
-      all = Monque::Job.all
-      all.shift.queue_name.should == "queue1"
-      all.shift.queue_name.should == "queue2"
-      all.shift.queue_name.should == "queue3"
+      it "should return all jobs" do
+        Monque::Job.all.length.should == 3
+      end
     end
     
     it "should know if it's in progress" do
