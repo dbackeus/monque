@@ -96,20 +96,20 @@ describe Monque do
     job.queue_name.should == "overridden"
   end
   
-  it "should reserve jobs in order of priority" do
-    Monque.enqueue(GoodJob, :job_options => {:priority => 0})
-    Monque.enqueue(GoodJob, :job_options => {:priority => 1})
-    Monque.enqueue(GoodJob, :job_options => {:priority => 2})
-    Monque.enqueue(GoodJob, :job_options => {:priority => 2})
-    Monque.enqueue(GoodJob, :job_options => {:priority => 1})
-    Monque.enqueue(GoodJob, :job_options => {:priority => 0})
+  pending "should reserve jobs in order of priority and time of enqueuing" do
+    Monque.enqueue(GoodJob, "1", :job_options => {:priority => 0})
+    Monque.enqueue(GoodJob, "2", :job_options => {:priority => 1})
+    Monque.enqueue(GoodJob, "3", :job_options => {:priority => 2})
+    Monque.enqueue(GoodJob, "4", :job_options => {:priority => 2})
+    Monque.enqueue(GoodJob, "5", :job_options => {:priority => 1})
+    Monque.enqueue(GoodJob, "6", :job_options => {:priority => 0})
     
-    Monque.reserve.priority.should == 2
-    Monque.reserve.priority.should == 2
-    Monque.reserve.priority.should == 1
-    Monque.reserve.priority.should == 1
-    Monque.reserve.priority.should == 0
-    Monque.reserve.priority.should == 0
+    Monque.reserve.args.first.should == "3"
+    Monque.reserve.args.first.should == "4"
+    Monque.reserve.args.first.should == "2"
+    Monque.reserve.args.first.should == "5"
+    Monque.reserve.args.first.should == "1"
+    Monque.reserve.args.first.should == "6"
     Monque.reserve.should be_nil
   end
   
@@ -122,7 +122,7 @@ describe Monque do
     Monque.enqueue(GoodJob, :job_options => {:queue => "queue1"})
     Monque.enqueue(GoodJob, :job_options => {:queue => "queue2"})
     
-    Monque.db.create_collection("not_a_queue")
+    Monque.db.create_collection("not_a_queue") unless Monque.db.collection_names.include?("not_a_queue")
     Monque.db.collection("not_a_queue").insert({:should => "remain"})
     
     Monque.drop
@@ -135,7 +135,7 @@ describe Monque do
   end
   
   it "should return the names of all the current queues" do
-    Monque.db.create_collection("not_a_queue")
+    Monque.db.create_collection("not_a_queue") unless Monque.db.collection_names.include?("not_a_queue")
     
     Monque.enqueue(GoodJob, :job_options => {:queue => "queue1"})
     Monque.enqueue(GoodJob, :job_options => {:queue => "queue2"})
