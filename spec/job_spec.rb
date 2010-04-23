@@ -27,5 +27,27 @@ module Monque
       job.unlock
       job.should_not be_in_progress
     end
+    
+    describe "failing" do
+      before(:each) do
+        Monque.enqueue(BadJob)
+        @job = Monque.reserve
+      end
+      
+      it "should send warnings to logger" do
+        Monque.logger.should_receive(:error).twice
+        @job.perform
+      end
+      
+      it "should set last_error" do
+        @job.perform
+        @job.last_error.should_not be_nil
+      end
+      
+      it "should unlock job" do
+        @job.perform
+        @job.should_not be_in_progress
+      end
+    end
   end
 end

@@ -72,6 +72,8 @@ module Monque
     
     def fail(exception)
       fail_text = "#{exception.message}\n#{exception.backtrace.join("\n")}"
+      Monque.logger.error "Failed Job #{self.inspect}"
+      Monque.logger.error fail_text
       update_attributes "$set" => {"in_progress" => false, "last_error" => fail_text, "run_after" => Time.now + 60}, "$inc" => {"attempts" => 1}
       false
     end
