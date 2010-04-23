@@ -1,5 +1,6 @@
 require 'mongo'
 
+require 'logger'
 require 'monque/job'
 require 'monque/worker'
 require 'monque/railtie' if defined?(Rails)
@@ -7,14 +8,42 @@ require 'monque/railtie' if defined?(Rails)
 module Monque
   @queues = {}
   
+  # Override Monques default database through this setter. Note that Monque will set
+  # the database to be in strict mode.
+  #
+  # @param [Mongo::DB] database the database you wish to use
+  # @return [Mongo::DB] the database you set
   def self.db=(database)
     database.strict = true
     @database = database
   end
   
+  # The database used for Monques queues. Defaults to a database called "monque" with
+  # a standard mongodb localhost connection.
+  #
+  # @return [Mongo::DB]
   def self.db
     return @database if @database
     self.db = Mongo::Connection.new.db("monque")
+  end
+  
+  # Monque logs information about jobs and failures when it is working.
+  # Jack in your own logger through this method if you wish to.
+  #
+  # @param [Logger] log your own logger
+  # @return [Logger] the logger you set
+  def self.logger=(log)
+    @logger = log
+  end
+  
+  # Get Monques logger.
+  #
+  # @return [Logger]
+  def self.logger
+    return @logger if @logger
+    logger = Logger.new(STDOUT)
+    logger.level = Logger::INFO
+    @logger = logger
   end
   
   # This method can be used to conveniently add a job to a queue.

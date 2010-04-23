@@ -6,6 +6,8 @@ require 'monque'
 require 'spec'
 require 'spec/autorun'
 
+Monque.logger = Logger.new(nil)
+
 if !system("which mongod")
   puts '', "** can't find `mongod` in your path"
   abort ''

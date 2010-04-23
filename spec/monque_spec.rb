@@ -5,6 +5,27 @@ describe Monque do
     Monque.drop
   end
   
+  describe "logger" do
+    after(:each) do
+      Monque.logger = Logger.new(nil)
+    end
+    
+    it "should be a Logger" do
+      Monque.logger.should be_instance_of(Logger)
+    end
+    
+    it "should be at info level" do
+      Monque.logger = nil # Reset the logger so that we get the default
+      Monque.logger.level.should == Logger::INFO
+    end
+    
+    it "should be assignable" do
+      new_logger = Logger.new(STDOUT)
+      Monque.logger = new_logger
+      Monque.logger.should == new_logger
+    end
+  end
+  
   it "should add a job to the 'default' queue if non specified" do
     Monque.enqueue(GoodJob)
     Monque.queue(:default).size.should == 1
