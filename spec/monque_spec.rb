@@ -79,13 +79,6 @@ describe Monque do
     Monque.reserve(:specific).should be_nil
   end
   
-  it "should remove jobs from queue" do
-    job = Monque.enqueue(GoodJob)
-    Monque.queue(:default).size.should == 1
-    job.destroy
-    Monque.queue(:default).size.should == 0
-  end
-  
   it "should enqueue with specific priority" do
     job = Monque.enqueue(GoodJob, "James", "Bond", :job_options => {:priority => 2})
     job.priority.should == 2

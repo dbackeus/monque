@@ -14,7 +14,7 @@ module Monque
       end
       
       it "should return all jobs" do
-        Monque::Job.all.length.should == 3
+        Job.all.length.should == 3
       end
     end
     
@@ -26,6 +26,37 @@ module Monque
       
       job.unlock
       job.should_not be_in_progress
+    end
+    
+    describe ".find" do
+      it "should find by queue and id" do
+        job = Monque.enqueue(GoodJob)
+        Job.find(:default, job.id).id.should == job.id
+      end
+      
+      it "should return nil if non is found" do
+        Job.find(:default, "asdf").should be_nil
+      end
+    end
+    
+    describe "#destroy" do
+      it "should remove itself from queue" do
+        job = Monque.enqueue(GoodJob)
+        Monque.queue(:default).size.should == 1
+        job.destroy
+        Monque.queue(:default).size.should == 0
+      end
+    end
+    
+    describe ".destroy" do
+      it "should remove job by id" do
+        job = Monque.enqueue(GoodJob)
+        Monque.enqueue(GoodJob)
+        Job.destroy(:default, job.id)
+        
+        Monque.queue(:default).size.should == 1
+        Monque.reserve.id.should_not == job.id
+      end
     end
     
     describe "failing" do

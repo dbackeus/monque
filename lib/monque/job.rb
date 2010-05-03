@@ -8,6 +8,16 @@ module Monque
       end.flatten
     end
     
+    def self.find(queue_name, id)
+      record = Monque.queue(queue_name).find_one("_id" => id)
+      return nil if record.nil?
+      Job.new(queue_name, record)
+    end
+    
+    def self.destroy(queue_name, id)
+      Monque.queue(queue_name).remove("_id" => id)
+    end
+    
     def initialize(queue_name, record)
       @queue_name = queue_name
       @record = record
