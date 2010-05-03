@@ -17,6 +17,10 @@ module Monque
       @payload_class ||= constantize(@record["klass"])
     end
     
+    def id
+      @record["_id"]
+    end
+    
     def args
       @record["args"]
     end
