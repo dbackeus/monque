@@ -19,11 +19,18 @@ module Monque
     # @param [Integer] interval the time to sleep between
     # each loop, defaults to 5
     def work(interval = 5)
+      register_signal_handlers
+      
+      Monque.logger.info "*** Worker #{self} is going to work.\n"
+      
       loop do
+        break if @shutdown
         queues.each do |queue|
           while job = Monque.reserve(queue)
-            Monque.logger.info "Performing job #{job.inspect}"
+            Monque.logger.info "\n*** Performing job #{job.inspect}.\n"
             job.perform
+            Monque.logger.info "\n*** Performed job #{job.inspect} successfully.\n"
+            exit if @shutdown
           end
         end
         break if interval.to_i == 0
@@ -31,7 +38,16 @@ module Monque
       end
     end
     
+    def shutdown
+      Monque.logger.info "\n***Shutting down now or after current job is completed.\n"
+      @shutdown = true
+    end
+    
     private
+    def register_signal_handlers
+      trap('QUIT') { shutdown }
+    end
+    
     def queues
       @queues || Monque.queues
     end
